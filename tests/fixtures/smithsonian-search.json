@@ -1,0 +1,116 @@
+{
+  "status": 200,
+  "responseCode": 1,
+  "response": {
+    "rows": [
+      {
+        "id": "zoo-1582653800612-1582653804953-0",
+        "title": "Vietnamese Mossy Frog",
+        "unitCode": "NZP",
+        "type": "edanmdm",
+        "url": "edanmdm:nzp_NZP-20081119-074MM",
+        "content": {
+          "freetext": {
+            "date": [
+              {
+                "label": "Creation Date",
+                "content": "2008:11:19"
+              }
+            ],
+            "notes": [
+              {
+                "label": "Keywords",
+                "content": "eye,Species: corticale,Genus: Theloderma,Family: Rhacophoridae,Order: Anura,Class: Amphibia,Phylum: Chordata,Kingdom: Animalia,Amphibian"
+              }
+            ],
+            "place": [
+              {
+                "label": "City",
+                "content": "Washington"
+              },
+              {
+                "label": "Country",
+                "content": "USA"
+              }
+            ],
+            "dataSource": [
+              {
+                "label": "Data Source",
+                "content": "Smithsonian's National Zoo & Conservation Biology Institute"
+              }
+            ],
+            "objectRights": [
+              {
+                "label": "Credit Line",
+                "content": "Smithsonian Institution"
+              }
+            ]
+          },
+          "indexedStructured": {
+            "online_media_type": [
+              "Images"
+            ]
+          },
+          "descriptiveNonRepeating": {
+            "title": {
+              "label": "Title",
+              "content": "Vietnamese Mossy Frog"
+            },
+            "record_ID": "nzp_NZP-20081119-074MM",
+            "unit_code": "NZP",
+            "data_source": "Smithsonian's National Zoo & Conservation Biology Institute",
+            "record_link": "https://nationalzoo.si.edu/object/nzp_NZP-20081119-074MM",
+            "online_media": {
+              "media": [
+                {
+                  "id": "media:NZP-20081119-074MM",
+                  "type": "Images",
+                  "idsId": "NZP-20081119-074MM",
+                  "usage": {
+                    "access": "CC0"
+                  },
+                  "content": "http://ids.si.edu/ids/deliveryService?id=NZP-20081119-074MM",
+                  "thumbnail": "http://ids.si.edu/ids/deliveryService?max=90&id=NZP-20081119-074MM",
+                  "resources": [
+                    {
+                      "label": "High-resolution TIFF",
+                      "url": "https://ids.si.edu/ids/download?id=NZP-20081119-074MM.tif",
+                      "width": 3000,
+                      "height": 2000,
+                      "dimensions": "3000x2000"
+                    },
+                    {
+                      "label": "High-resolution JPEG",
+                      "url": "https://ids.si.edu/ids/download?id=NZP-20081119-074MM.jpg",
+                      "width": 3000,
+                      "height": 2000,
+                      "dimensions": "3000x2000"
+                    },
+                    {
+                      "label": "Screen Image",
+                      "url": "https://ids.si.edu/ids/download?id=NZP-20081119-074MM_screen"
+                    },
+                    {
+                      "label": "Thumbnail Image",
+                      "url": "https://ids.si.edu/ids/download?id=NZP-20081119-074MM_thumb"
+                    }
+                  ]
+                }
+              ],
+              "mediaCount": 1
+            },
+            "metadata_usage": {
+              "access": "CC0"
+            }
+          }
+        },
+        "hash": "7e478a04432fc989fe2a6e855617ceae8871719f",
+        "docSignature": "d43472fad9d11d9ce334a11adb5b4923",
+        "timestamp": "1582635804",
+        "lastTimeUpdated": "1747762315",
+        "version": "1747762315"
+      }
+    ],
+    "rowCount": 1
+  }
+}

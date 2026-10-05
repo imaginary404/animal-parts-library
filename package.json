@@ -1,0 +1,25 @@
+{
+  "name": "animal-parts-library",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24.5.0" },
+  "scripts": {
+    "dev": "node --use-env-proxy node_modules/vite/bin/vite.js",
+    "test": "node --test tests/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "vite build",
+    "preview": "node --use-env-proxy node_modules/vite/bin/vite.js preview"
+  },
+  "dependencies": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "7.0.2",
+    "vite": "8.3.2"
+  }
+}
