@@ -1,6 +1,6 @@
 # Architecture
 
-Status: Phase 3 browser prototype implemented. The contracts below are implemented in `src/sources/types.ts`; desktop and local-library sections remain planned. Verified Smithsonian behavior and mapping limits are recorded in [API research](SMITHSONIAN_API_RESEARCH.md).
+Status: browser prototype implemented through the iNaturalist increment of Phase 4. The contracts below are implemented in `src/sources/types.ts`; desktop and local-library sections remain planned. Verified behavior and mapping limits are recorded in [Smithsonian research](SMITHSONIAN_API_RESEARCH.md) and [iNaturalist research](INATURALIST_API_RESEARCH.md).
 
 ## Product scope and stack
 
@@ -11,19 +11,19 @@ Animal Parts Library will search legitimate biodiversity, museum, and natural-hi
 - Rust: planned application layer for disk access, SQLite operations, imports, and thumbnail generation.
 - SQLite: local metadata database; original image bytes remain on disk.
 
-The browser prototype has no desktop dependency. Its entire functional path is **search → Smithsonian API → normalized results → image grid → detail view → original source**. It does not import images, require SQLite, or depend on Tauri/Rust. A minimal Vite middleware in `server/smithsonian.ts` reads `SMITHSONIAN_API_KEY` server-side and provides fixed same-origin search/content endpoints in both development and build preview. The key is never a frontend environment variable. Browser CORS support is not assumed or needed by this boundary.
+The browser prototype has no desktop dependency. Its entire functional path is **search → Smithsonian + iNaturalist APIs → normalized results → shared image grid → detail view → original source**. It does not import images, require SQLite, or depend on Tauri/Rust. A minimal Vite middleware in `server/smithsonian.ts` reads `SMITHSONIAN_API_KEY` server-side and provides fixed same-origin search/content endpoints in both development and build preview. The key is never a frontend environment variable. A parallel middleware in `server/inaturalist.ts` provides fixed, unauthenticated public observation search/detail GETs. Both middleware boundaries are included in Vite development and preview. Browser CORS support is not assumed or needed. Both use request cancellation and 20-second timeouts.
 
 ## Component boundaries
 
-The current UI submits a source-neutral search request directly to a single `SourceAdapter`. `SmithsonianAdapter` owns pagination, normalization, cancellation, and errors; the server boundary owns authentication and the fixed upstream request. The UI consumes normalized data without understanding upstream schemas. A coordinator that invokes multiple enabled adapters and combines their results is planned for Phase 4, not implemented now.
+The UI submits a source-neutral request to `src/sources/search.ts`. Its small coordinator invokes `SmithsonianAdapter` and `INaturalistAdapter` concurrently using `Promise.allSettled`, combines successful normalized pages, and retains per-source errors and opaque cursors. A failed source does not discard the successful source. Pagination advances successful sources, retries a failed source at its previous cursor, and skips exhausted sources. The UI appends pages and preserves prior results. Results are concatenated in adapter order without global ranking or deduplication. Each adapter owns upstream-specific normalization/pagination; the server boundary owns fixed requests and Smithsonian authentication.
 
-Start with one Smithsonian adapter. Add iNaturalist, Wikimedia Commons, Biodiversity Heritage Library (BHL), GBIF, and future repositories independently after verifying their APIs and policies. Do not create a universal query language, plugin runtime, or background service for the first prototype.
+Smithsonian and iNaturalist are the only enabled adapters. Wikimedia Commons, Biodiversity Heritage Library (BHL), GBIF, and future repositories can be added independently after verifying their APIs and policies. Do not create a universal query language, plugin runtime, or background service for the first prototype.
 
-The current detail view displays the metadata already returned by search. The adapter also implements `getResult` for explicit upstream refresh; the UI does not make an extra request on each selection. The image grid includes only `Images` media with a safe thumbnail or preview URL. Raw source metadata is displayed as text, never executed as HTML. There is no deduplication, query expansion, advanced filter, download action, or other source adapter.
+The current detail view displays the metadata already returned by search. The adapter also implements `getResult` for explicit upstream refresh; the UI does not make an extra request on each selection. The grid shows Smithsonian `Images` media and iNaturalist photos with safe thumbnail/preview URLs. Every card identifies its source. Raw source metadata is displayed as text, never executed as HTML. There is no deduplication, query expansion, advanced filter, download action, or third source adapter.
 
 ## Normalized result contract
 
-Unknown scalar metadata is `null`; do not fabricate names, dimensions, dates, or image URLs. `id` is a stable namespaced image identity, distinct from the upstream record identity in `sourceId`. For records with multiple images, include a stable upstream media identifier in `id`. `source` is a stable adapter key such as `smithsonian` or `wikimedia-commons`.
+Unknown scalar metadata is `null`; do not fabricate names, dimensions, dates, or image URLs. `id` is a stable namespaced image identity, distinct from the upstream record identity in `sourceId`. For records with multiple images, include a stable upstream media identifier in `id`. `source` is a stable adapter key such as `smithsonian` or `inaturalist`.
 
 ```typescript
 interface SearchResult {
@@ -52,7 +52,7 @@ interface SearchResult {
 }
 ```
 
-`sourceUrl` points to the original repository's record page. Image URLs serve distinct purposes: thumbnail for the grid, preview for inspection, original for the highest-quality original asset, and download for an explicitly provided download endpoint. Any of these image URLs may be unavailable. Dimensions describe the original asset when known. `date` preserves the source's image or record date and precision; its meaning is recorded in `sourceMetadata`.
+`sourceUrl` points to the original repository's record page. Image URLs serve distinct purposes: thumbnail for the grid, preview for inspection, original for the highest-quality original asset, and download for a verified image/download URL. Any of these image URLs may be unavailable. Dimensions describe the source-reported original asset when known. For iNaturalist, the documented `original` variant is capped at 2048px and may differ from reported `original_dimensions`; it is not guaranteed to be the untouched upload. `date` preserves the source's image or record date and precision; its meaning is recorded in `sourceMetadata`.
 
 `sourceMetadata` retains relevant upstream identifiers, original rights statements, media-specific fields, and mapping evidence as JSON-compatible data. It must contain no credentials. Render upstream text as untrusted content. A source label or a repository-wide policy alone is insufficient evidence of an individual image's rights.
 
@@ -90,6 +90,14 @@ Adapters normalize data at their boundary, support cancellation, and report auth
 5. Follow API terms, rate limits, and access/download restrictions. A downloadable image is not automatically licensed for reuse. Search visibility is separate from permission to download or reuse.
 6. At import time, retain the source record and image IDs, record URL, fetched media URL, retrieval timestamp, rights evidence, creator, attribution, normalized metadata, and relevant source metadata. Later refreshes must not erase the historical import evidence.
 7. User tags and annotations do not alter source provenance or licensing. Preserve provenance for every imported occurrence, including duplicate files with different source records.
+
+### iNaturalist mapping
+
+Each photo becomes a separate result identified by observation ID + photo ID. `sourceId` is the observation ID, and `sourceUrl` points to that observation. Taxonomy comes from `taxon.name` and `taxon.preferred_common_name`; `anatomicalPart` remains null. `date` means observation date, not verified capture date.
+
+Photo license codes and original attribution are preserved independently of observation rights. Supported CC license URLs follow the official current iNaturalist license mapping. CC0/BY/BY-SA/BY-ND permit commercial use subject to their terms; NC licenses and explicit copyright are not allowed. Unsupported, missing, or conflicting evidence stays unknown. A photo owner is extracted only from the exact official attribution formats; the observation owner is never substituted. CC0 attribution may omit a creator, which remains null.
+
+Only documented iNaturalist photo hosts and matching photo-size filenames are used to derive small/large/original variants; external or placeholder URLs do not acquire an invented original. Each result retains the upstream observation, selected photo, and mapping/rights notes in `sourceMetadata`.
 
 ## Planned local library
 

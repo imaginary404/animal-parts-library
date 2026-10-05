@@ -1,6 +1,6 @@
 # Roadmap
 
-Status: the Phase 3 Smithsonian-only browser prototype is implemented. Proceed in the following order; Phases 4–7 remain planned and have not started. See [API research](SMITHSONIAN_API_RESEARCH.md) for verified sources and validation details.
+Status: Phase 3 is implemented; Phase 4 now includes iNaturalist alongside Smithsonian. No further source is implemented, and Phases 5–7 remain planned. See [Smithsonian research](SMITHSONIAN_API_RESEARCH.md) and [iNaturalist research](INATURALIST_API_RESEARCH.md) for verified sources and validation details.
 
 ## 1. Research/API verification
 
@@ -20,13 +20,15 @@ Implement only **search → Smithsonian API → normalized results → image gri
 
 Completion: a representative real search displays correctly mapped images; selecting a result shows its details and opens the original source record. Missing licensing is visibly unknown. No multi-source search, local imports, desktop packaging, advanced search, or AI is required.
 
-Implemented: React search form, Smithsonian adapter, server-side key configuration, normalized image grid, detail metadata/provenance, source link, and basic record pagination. Normalization tests use public fixture data rather than the live API. No Phase 4 features are included.
+Implemented: React search form, Smithsonian adapter, server-side key configuration, normalized image grid, detail metadata/provenance, source link, and basic record pagination. Normalization tests use public fixture data rather than the live API. This completed milestone is preserved within the current multi-source prototype.
 
 ## 4. Multi-source search
 
 Add verified adapters independently for iNaturalist, Wikimedia Commons, BHL, and GBIF. Preserve source-specific pagination, rights evidence, and failures while presenting a common result shape. Handle rate limits and cancellation without hiding partial failures.
 
 Completion: each added source has representative normalization checks, and combined searches retain accurate source identities and licensing states.
+
+Implemented increment: iNaturalist public observation search, photo-level normalization/rights/provenance, concurrent two-source search, independent pagination and failure handling, source labels, and fixture/mock tests. Wikimedia Commons, BHL, GBIF, and every other additional source remain unimplemented. Stop here before adding another source.
 
 ## 5. Local library
 

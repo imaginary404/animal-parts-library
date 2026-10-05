@@ -1,0 +1,26 @@
+{
+  "total_results": 3,
+  "page": 1,
+  "per_page": 2,
+  "results": [
+    {
+      "id": 123456,
+      "uri": "https://www.inaturalist.org/observations/123456",
+      "observed_on": "2026-09-30",
+      "description": "Close view of an eye. <em>Source text is untrusted</em>",
+      "license_code": "cc0",
+      "user": { "id": 12, "login": "observer", "name": "Observation Owner" },
+      "taxon": { "id": 1, "name": "Agalychnis callidryas", "preferred_common_name": "Red-eyed Tree Frog", "rank": "species", "iconic_taxon_name": "Amphibia" },
+      "photos": [
+        { "id": 111, "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/111/square.jpeg", "license_code": "cc-by", "attribution": "(c) Photo, Creator, some rights reserved (CC BY)", "original_dimensions": { "width": 1800, "height": 1200 } },
+        { "id": 112, "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/112/square.jpg", "license_code": "cc-by-nc", "attribution": "(c) Second Creator, some rights reserved (CC BY-NC)", "original_dimensions": { "width": 1000, "height": 800 } }
+      ]
+    },
+    {
+      "id": 123457,
+      "observed_on": null,
+      "taxon": null,
+      "photos": []
+    }
+  ]
+}
